@@ -1,45 +1,46 @@
-/*
- Print Hello World on Serial Console
-*/
-
 #define ARDUINO_MAIN
 #include "Arduino.h"
 
-int speed; // [-63..63]
+int speed = 0; // [-255..255]
 
-unsigned short pwmPinLA1 = 13;
-unsigned short pwmPinLA2 = 12;
-unsigned short pwmPinLB1 = 10;
-unsigned short pwmPinLB2 = 11;
-unsigned short pwmPinRA1 = 4;
-unsigned short pwmPinRA2 = 5;
-unsigned short pwmPinRB1 = 2;
-unsigned short pwmPinRB2 = 3;
+#define pwmPinRA1 13
+#define pwmPinRA2 12
+#define pwmPinRB1 8
+#define pwmPinRB2 11
+#define pwmPinLA1 4
+#define pwmPinLA2 5
+#define pwmPinLB1 2
+#define pwmPinLB2 3
 
 void set_speed(int spe);
-void turn_right(void);
+void stop(void);
 void turn_left(void);
+void turn_left2(void);
+void turn_right(void);
+void turn_right2(void);
 
-int main() {
+//____________________________________________________________
+int main() 
+{
     init();
 
     delay(1);
 
-    unsigned short pin1 = 12;
+    //    unsigned short pin1 = 12;
     unsigned short pin2 = 51;
     int sensorPin = A0;
     int sensorValue = 0;
-    pinMode(pin1, OUTPUT);
+    //    pinMode(pin1, OUTPUT);
     pinMode(pin2, OUTPUT);
-    pinMode(pwmPinLA1, OUTPUT);
-    pinMode(pwmPinLA2, OUTPUT);
-    pinMode(pwmPinLB1, OUTPUT);
-    pinMode(pwmPinLB2, OUTPUT);
     pinMode(pwmPinRA1, OUTPUT);
     pinMode(pwmPinRA2, OUTPUT);
     pinMode(pwmPinRB1, OUTPUT);
     pinMode(pwmPinRB2, OUTPUT);
-    digitalWrite(pin1, HIGH);
+    pinMode(pwmPinLA1, OUTPUT);
+    pinMode(pwmPinLA2, OUTPUT);
+    pinMode(pwmPinLB1, OUTPUT);
+    pinMode(pwmPinLB2, OUTPUT);
+    //    digitalWrite(pin1, HIGH);
     digitalWrite(pin2, HIGH);
 
 
@@ -47,44 +48,46 @@ int main() {
     USBDevice.attach();
 #endif
 
-
     // initialize serial:
     Serial.begin(115200);
 
-
+    int delay1 = 3000;
 
     //    for (;;) 
         {
             static int bPP = 0;
  
             //            sensorValue = analogRead(sensorPin);
-            int delay1 = 5000;
 
-            set_speed(63);
+            stop();
+
+            set_speed(255);
             delay(delay1);
 
-            turn_right();
+            turn_right2();
             delay(delay1);
 
-            set_speed(63);
+            set_speed(127);
             delay(delay1);
 
-            turn_left();
+            set_speed(255);
+            turn_left2();
             delay(delay1);
 
-            set_speed(-63);
+            set_speed(-255);
             delay(delay1);
 
-            turn_right();
+            turn_right2();
             delay(delay1);
 
-            set_speed(-63);
+            set_speed(-127);
             delay(delay1);
 
-            turn_left();
+            set_speed(-255);
+            turn_left2();
             delay(delay1);
 
-            set_speed(0);
+            stop();
             
 
 //!!!            if (bPP%100 == 0)
@@ -97,98 +100,161 @@ int main() {
     
     return 0;
 }
-
-
-
-
+//____________________________________________________________
+void stop(void)
+{
+    analogWrite(pwmPinRA1, 0);
+    analogWrite(pwmPinRA2, 0);
+    analogWrite(pwmPinRB1, 0);
+    analogWrite(pwmPinRB2, 0);
+    analogWrite(pwmPinLA1, 0);
+    analogWrite(pwmPinLA2, 0);
+    analogWrite(pwmPinLB1, 0);
+    analogWrite(pwmPinLB2, 0);
+}
+//____________________________________________________________
 void set_speed(int spe)
 {
     speed = spe;
 
-    // speed must be [-63..63]
+    // speed must be [-255..255]
     if (speed < 0)
         {
-            analogWrite(pwmPinLA1, speed);
-            analogWrite(pwmPinLA2, 0);
-            analogWrite(pwmPinLB1, speed);
-            analogWrite(pwmPinLB2, 0);
-
-            analogWrite(pwmPinRA1, speed);
-            analogWrite(pwmPinRA2, 0);
-            analogWrite(pwmPinRB1, speed);
-            analogWrite(pwmPinRB2, 0);
-        }
-    else
-        {
-            analogWrite(pwmPinLA1, 0);
-            analogWrite(pwmPinLA2, -speed);
-            analogWrite(pwmPinLB1, 0);
-            analogWrite(pwmPinLB2, -speed);
-
             analogWrite(pwmPinRA1, 0);
             analogWrite(pwmPinRA2, -speed);
             analogWrite(pwmPinRB1, 0);
             analogWrite(pwmPinRB2, -speed);
-        }    
-}
 
-void turn_right(void)
-{
-    if (speed < 0)
-        {
             analogWrite(pwmPinLA1, 0);
             analogWrite(pwmPinLA2, -speed);
             analogWrite(pwmPinLB1, 0);
             analogWrite(pwmPinLB2, -speed);
-
-            analogWrite(pwmPinRA1, speed);
-            analogWrite(pwmPinRA2, 0);
-            analogWrite(pwmPinRB1, speed);
-            analogWrite(pwmPinRB2, 0);
         }
     else
         {
-            analogWrite(pwmPinLA1, 0);
-            analogWrite(pwmPinLA2, speed);
-            analogWrite(pwmPinLB1, 0);
-            analogWrite(pwmPinLB2, speed);
-
             analogWrite(pwmPinRA1, speed);
             analogWrite(pwmPinRA2, 0);
             analogWrite(pwmPinRB1, speed);
             analogWrite(pwmPinRB2, 0);
+
+            analogWrite(pwmPinLA1, speed);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, speed);
+            analogWrite(pwmPinLB2, 0);
         }    
 }
-
+//____________________________________________________________
 void turn_left(void)
 {
     if (speed < 0)
         {
-            analogWrite(pwmPinLA1, -speed);
-            analogWrite(pwmPinLA2, 0);
-            analogWrite(pwmPinLB1, -speed);
-            analogWrite(pwmPinLB2, 0);
-
             analogWrite(pwmPinRA1, 0);
             analogWrite(pwmPinRA2, -speed);
             analogWrite(pwmPinRB1, 0);
             analogWrite(pwmPinRB2, -speed);
+
+            analogWrite(pwmPinLA1, -speed);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, -speed);
+            analogWrite(pwmPinLB2, 0);
         }
     else
         {
-            analogWrite(pwmPinLA1, speed);
-            analogWrite(pwmPinLA2, 0);
-            analogWrite(pwmPinLB1, speed);
-            analogWrite(pwmPinLB2, 0);
+            analogWrite(pwmPinRA1, speed);
+            analogWrite(pwmPinRA2, 0);
+            analogWrite(pwmPinRB1, speed);
+            analogWrite(pwmPinRB2, 0);
 
+            analogWrite(pwmPinLA1, 0);
+            analogWrite(pwmPinLA2, speed);
+            analogWrite(pwmPinLB1, 0);
+            analogWrite(pwmPinLB2, speed);
+        }    
+}
+//____________________________________________________________
+void turn_left2(void)
+{
+    if (speed < 0)
+        {
+            analogWrite(pwmPinRA1, 0);
+            analogWrite(pwmPinRA2, -speed);
+            analogWrite(pwmPinRB1, 0);
+            analogWrite(pwmPinRB2, -speed);
+
+            analogWrite(pwmPinLA1, 0);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, 0);
+            analogWrite(pwmPinLB2, 0);
+        }
+    else
+        {
+            analogWrite(pwmPinRA1, speed);
+            analogWrite(pwmPinRA2, 0);
+            analogWrite(pwmPinRB1, speed);
+            analogWrite(pwmPinRB2, 0);
+
+            analogWrite(pwmPinLA1, 0);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, 0);
+            analogWrite(pwmPinLB2, 0);
+        }    
+}
+//____________________________________________________________
+void turn_right(void)
+{
+    if (speed < 0)
+        {
+            analogWrite(pwmPinRA1, -speed);
+            analogWrite(pwmPinRA2, 0);
+            analogWrite(pwmPinRB1, -speed);
+            analogWrite(pwmPinRB2, 0);
+
+            analogWrite(pwmPinLA1, 0);
+            analogWrite(pwmPinLA2, -speed);
+            analogWrite(pwmPinLB1, 0);
+            analogWrite(pwmPinLB2, -speed);
+        }
+    else
+        {
             analogWrite(pwmPinRA1, 0);
             analogWrite(pwmPinRA2, speed);
             analogWrite(pwmPinRB1, 0);
             analogWrite(pwmPinRB2, speed);
-        }    
+
+            analogWrite(pwmPinLA1, speed);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, speed);
+            analogWrite(pwmPinLB2, 0);
+        }
 }
+//____________________________________________________________
+void turn_right2(void)
+{
+    if (speed < 0)
+        {
+            analogWrite(pwmPinRA1, 0);
+            analogWrite(pwmPinRA2, 0);
+            analogWrite(pwmPinRB1, 0);
+            analogWrite(pwmPinRB2, 0);
 
+            analogWrite(pwmPinLA1, 0);
+            analogWrite(pwmPinLA2, -speed);
+            analogWrite(pwmPinLB1, 0);
+            analogWrite(pwmPinLB2, -speed);
+        }
+    else
+        {
+            analogWrite(pwmPinRA1, 0);
+            analogWrite(pwmPinRA2, 0);
+            analogWrite(pwmPinRB1, 0);
+            analogWrite(pwmPinRB2, 0);
 
+            analogWrite(pwmPinLA1, speed);
+            analogWrite(pwmPinLA2, 0);
+            analogWrite(pwmPinLB1, speed);
+            analogWrite(pwmPinLB2, 0);
+        }
+}
 
 
 
